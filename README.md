@@ -1,2 +1,1 @@
-# This Github is for the block editor team's graduation research.
-
+This Github is for the block editor team's graduation research.
