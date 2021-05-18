@@ -1,2 +1,2 @@
 # -
-卒研用ブログラムの保存用Githubです。
+This Github is for the block editor team's graduation research.
