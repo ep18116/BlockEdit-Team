@@ -511,8 +511,7 @@ viewASTxy model (ASTxy (x, y) (ASTne n b r)) =
     , on "contextmenu" (\event -> MsgCloneUs (ASTne n b r) event)
     , on "mousedown" (\event -> MsgStartDnD event) 
     ] 
-    [ --("N", brickSvg model.getBrickSize)　変更箇所
-    ("N", brickSvg n model.getBrickSize ) -- 実際のブロックの描画はbrickSvgで
+    [ ("N", brickSvg n model.getBrickSize ) -- 実際のブロックの描画はbrickSvgで
     , ("R", lazy3 viewAST model.getBrickSize True  r)
     , ("B", lazy3 viewAST model.getBrickSize False b)
     ]  
@@ -531,8 +530,7 @@ viewAST size isRight ast =
                 , on "contextmenu" (\event -> MsgCloneUs   (ASTne node b r) event)
                 , on "mousedown"   (\event -> MsgLetMeRoot (ASTne node b r) event)
                 ]
-                [ --("N", brickSvg size) 変更箇所
-                ("N", brickSvg node size ) -- 実際のブロックの描画はbrickSvgで
+                [ ("N", brickSvg node size ) -- 実際のブロックの描画はbrickSvgで
                 , ("R", lazy3 viewAST size True  r)
                 , ("B", lazy3 viewAST size False b)
                 ]                        
