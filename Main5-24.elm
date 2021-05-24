@@ -587,7 +587,7 @@ brickSvg node size =
 
  
  div[][
-    div[style "position" "absolute"][ img [ src image , width "115" , height "115" ,align "center"][]]
+    div[style "position" "absolute"][ img [ src image , width "130" , height "130" ,align "center"][]]
     ,
     --div[][ img [ src image , width "130", height "130"] []]
     --,
