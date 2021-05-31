@@ -1,0 +1,52 @@
+attachMe : ASTxy Node -> Mouse.Event -> Model -> Model
+attachMe (ASTxy xy (ASTne node bottom right)) event model = 
+    let 
+        -- 接続できたときのみastをルートリストから削除するために
+        -- Writerアプリカティブで変更の有無を判定
+        f top xy0 n b r  =
+            if b == (Nil, Unchanged) && insideBottomBrick xy0 xy then
+                unit (AST n) |> andMap (AST node bottom right, Changed) |> andMap r
+            else if r == (Nil, Unchanged) && insideRightBrick xy0 xy then
+                unit (AST n) |> andMap b |> andMap (AST node bottom right, Changed)
+            else
+                unit (AST n) |> andMap b |> andMap r 
+    in    
+        if event.button /= Mouse.MainButton 
+        || node.getBrickType == EntryBrick 
+        then
+            model
+        else
+            let 
+                (newRoots, isChanged) = 
+                    model.getASTRoots
+                    |> listMapW (\(ASTxy (x, y) (ASTne n b r))->                                    
+                        let d = interval model
+                        in unit (ASTxy (x,y))
+                            |> andMap (f ASTne
+                                        (x, y) 
+                                        n 
+                                        (recurAST d (f AST) (\_ -> unit Nil) (x, y + d) b) 
+                                        (recurAST d (f AST) (\_ -> unit Nil) (x + d, y) r)
+                    )
+                    
+                 --listMapW  
+                   --  (
+                     --    (\(ASTxy (x, y) (ASTne n b r)) ->
+                       --  if n.getBrickType /= TailBrick then --追加、根のBrickTypeがTailで無いことを判定する
+                        --     let d = interval model
+                          --   in 
+                          --      unit (ASTxy (x, y) )
+                          --      |> andMap (f ASTne(x,y) n (recurAST d (f AST) (\_ -> unit Nil) (x, y + d) b)  (recurAST d (f AST) (\_ -> unit Nil) (x + d, y) r)) 
+                          --      |> andMap (recurAttachAST d f u (x + d, y) r)
+                          --  else unit (ASTxy (x, y) (ASTne n b r)) --追加、根のBrickTypeがTailの場合何も変更を加えない処理を行う
+                        -- )
+                    --  )
+                    --  model.getASTRoots
+                newModel = 
+                    { model | getASTRoots = newRoots }
+            in
+                -- 接木が成功したことを確認したときだけリストから削除する
+                if isChanged == Changed then
+                    newModel |> removeAST (ASTxy xy (ASTne node bottom right))
+                else    
+                    newModel
