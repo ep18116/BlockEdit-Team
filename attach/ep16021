@@ -1,0 +1,47 @@
+-- ASTを別のASTの葉に接木する
+-- かならずしも接木が行われるとは限らない（近接ブロックがない位置でマウスをリリースするかもしれない）
+-- よって接木が成功したことを確認した上ではじめてAST astをASTのリストから削除すべきことに注意
+-- letMeRootと同様，すべてのASTを作り直すことになる重い処理（接木したい位置情報からだけでは
+-- どちらの部分木配下が対象になるのか判定しようがないので致し方ない）
+attachMe : ASTxy Node -> Mouse.Event -> Model -> Model
+attachMe (ASTxy xy (ASTne node bottom right)) event model = 
+    let 
+        -- 接続できたときのみastをルートリストから削除するために
+        -- Writerアプリカティブで変更の有無を判定
+        u xy0 = 
+          if insideBrick xy0 xy then 
+                (AST node bottom right, Changed)
+          else
+                unit Nil
+
+        f _ n b r =
+            unit (AST n) |> andMap b |> andMap r
+    in    
+        if event.button /= Mouse.MainButton 
+        || node.getBrickType == EntryBrick
+        then
+            model
+        else
+            let 
+                (newRoots, isChanged) = 
+                 listMapW  
+                     (
+                         (\(ASTxy (x, y) (ASTne n b r)) ->
+                         if n.getBrickType /= TailBrick then --追加、根のBrickTypeがTailで無いことを判定する
+                             let d = interval model
+                             in 
+                                unit (\ab ar -> ASTxy (x, y) (ASTne n ab ar))
+                                |> andMap (recurAST d f u (x, y + d) b) 
+                                |> andMap (recurAST d f u (x + d, y) r)
+                              else unit (ASTxy (x, y) (ASTne n b r)) --追加、根のBrickTypeがTailの場合何も変更を加えない処理を行う
+                         )
+                      )
+                      model.getASTRoots
+                newModel = 
+                    { model | getASTRoots = newRoots }
+            in
+                -- 接木が成功したことを確認したときだけリストから削除する
+                if isChanged == Changed then
+                    newModel |> removeAST (ASTxy xy (ASTne node bottom right))
+                else    
+                    newModel
