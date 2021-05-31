@@ -1,0 +1,62 @@
+attachMe : ASTxy Node -> Mouse.Event -> Model -> Model
+attachMe (ASTxy xy (ASTne node bottom right)) event model = 
+    let 
+        -- 接続できたときのみastをルートリストから削除するために
+        -- Writerアプリカティブで変更の有無を判定
+        -- u xy0 = 
+        --   if insideBrick xy0 xy then 
+                -- (AST node bottom right, Changed)
+        --   else
+                -- unit Nil
+
+        -- 関数uでやっていた処理を一つ上の親ノードでやるように関数fに移動することによって、禁則処理を実現する
+        f top xy0 n b r =
+            -- unit (AST n) |> andMap b |> andMap r
+            -- Bottom, Rightそれぞれで、接続できたときのみastをルートリストから削除するために
+            -- Writerアプリカティブで変更の有無を判定
+            if b == (Nil, Unchanged) && insideBottomBrick xy0 xy then
+                unit (AST n) |> andMap (AST node bottom right, Changed) |> andMap r
+            else if r == (Nil, Unchanged) && insideRightBrick xy0 xy then
+                unit (AST n) |> andMap b |> andMap (AST node bottom right, Changed)
+            else
+                unit (AST n) |> andMap b |> andMap r
+    in    
+        if event.button /= Mouse.MainButton 
+        || node.getBrickType == EntryBrick
+        then
+            model
+        else
+            let 
+                (newRoots, isChanged) = 
+                --  listMapW  
+                    --  (
+                        --  (\(ASTxy (x, y) (ASTne n b r)) ->
+                        --  if n.getBrickType /= TailBrick then --追加、根のBrickTypeがTailで無いことを判定する
+                            --  let d = interval model
+                            --  in 
+                                -- unit (\ab ar -> ASTxy (x, y) (ASTne n ab ar))
+                                -- |> andMap (recurAttachAST d f u (x, y + d) b) 
+                                -- |> andMap (recurAttachAST d f u (x + d, y) r)
+                            --   else unit (ASTxy (x, y) (ASTne n b r)) --追加、根のBrickTypeがTailの場合何も変更を加えない処理を行う
+                        --  )
+                    --   )
+                    model.getASTRoots
+                    |> listMapW (\(ASTxy (x, y) (ASTne n b r)) ->
+                                    let d = interval model
+                                    in unit (ASTxy (x, y))
+                                        |> andMap (f ASTne
+                                                    (x, y)
+                                                    n
+                                                    -- \_は、何を受け取ってもunit Nilに返す
+                                                    (recurAST d (f AST) (\_ -> unit Nil) (x, y + d) b)
+                                                    (recurAST d (f AST) (\_ -> unit Nil) (x + d, y) r)
+                                                    )
+                                )
+                newModel =
+                    { model | getASTRoots = newRoots }
+            in
+                -- 接木が成功したことを確認したときだけリストから削除する
+                if isChanged == Changed then
+                    newModel |> removeAST (ASTxy xy (ASTne node bottom right))
+                else    
+                    newModel
