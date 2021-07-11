@@ -343,8 +343,9 @@ cloneUs ast event model =
     if event.button /= Mouse.MainButton && model.getDnDInfo.getOnDnD then
         model
     else
-        addASTxy (ASTxy 
+        addASTxy (ASTxy (pairMap2 (-) 
                           (pairMap2 (-) event.pagePos event.offsetPos) --凹凸を含む左上の角の座標
+                          (19, 13)) -- 元のブロックと完全に重ならないように少しずらす
                         ast)
                  model
 
