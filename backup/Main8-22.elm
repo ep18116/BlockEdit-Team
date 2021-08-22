@@ -556,21 +556,12 @@ attachMe (ASTxy xy (ASTne node bottom right)) event model =
                         )
         in
         -- 接木が成功したことを確認したときだけリストから削除する
-        if  (Tuple.first xy) < 380 ||
-            newRoots ==  Changed roots  then 
-            { model | getASTRoots = newRoots }
+        case newRoots of
+            Changed roots ->
+                { model | getASTRoots = roots }
                     |> removeASTxy (ASTxy xy (ASTne node bottom right))
-                else
-                    Model
-
--- 不要になった変更フラグを剥がす
-discardC : Change a -> a
-discardC ca =
-    case ca of
-        Changed a ->
-            a
-        Unchanged a ->
-            a
+            Unchanged _ ->
+                model
         
 
 
