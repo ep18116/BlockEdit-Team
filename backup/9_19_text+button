@@ -764,7 +764,7 @@ viewASTxy model (ASTxy (x, y) (ASTne n b r)) =
                     <| Decode.succeed
                         <| MsgCloneUs (ASTxy ( x, y ) (ASTne n b r))
         ]
-        [ ("N", lazy3 viewBrick model ( x, y ) n ) -- 実際のブロックの描画はbrickSvgで
+        [ ("N", lazy3 viewBrick model ( x, y ) n ) -- 実際のブロックの描画はviewBrickで
         , ("R", lazy4 viewAST model ( x + interval model, y ) ToRight r )
         , ("B", lazy4 viewAST model (x, y + interval model ) ToBottom b )
         ]
