@@ -765,8 +765,8 @@ viewASTxy model (ASTxy (x, y) (ASTne n b r)) =
                         <| MsgCloneUs (ASTxy ( x, y ) (ASTne n b r))
         ]
         [ ("N", lazy3 viewBrick model ( x, y ) n ) -- 実際のブロックの描画はbrickSvgで
-        , ("R", lazy4 viewAST model ( x + interval model, y ) ToRight r )
-        , ("B", lazy4 viewAST model (x, y + interval model ) ToBottom b )
+        , ("R", lazy4 viewAST model True (x + interval model, y ) r)
+        , ("B", lazy4 viewAST model False (x, y + interval model ) b)
         ]
 
 
@@ -812,8 +812,8 @@ viewAST model ( x, y ) direction ast =
                                            <| MsgCloneUs (ASTxy ( x, y ) (ASTne n b r))
                 ]
                 [ ( "N", lazy3 viewBrick model ( x, y ) n ) -- 実際のブロックの描画はbrickSvgで
-                , ( "R", lazy4 viewAST model ( x + interval model, y ) ToRight r )
-                , ( "B", lazy4 viewAST model ( x, y + interval model ) ToBottom b )
+                , ( "R", lazy4 viewAST model True  (x +  interval model, y ) r)
+                , ( "B", lazy4 viewAST model False ( x, y +  interval model ) b)
                 ]
 
 
