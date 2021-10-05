@@ -1,0 +1,176 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Main_Decode</title>
+  <!-- CDNでBulmaを参照 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
+  <script src="main.js"></script>
+
+  <style>
+/* スクロールボックスの設定 */
+    #wrapper {
+      height: 1000px;
+      width: 400px;
+      overflow-y: scroll;
+      background-color: lightyellow;
+	  cursor: pointer;
+    }
+
+	#pointer {
+	  cursor: pointer;
+  	}
+    
+    /* クリックするとactiveになり、背景の色が変わる */
+    #button {
+      height: 200px;
+      width: 200px;
+    }
+    #button::first-letter {
+      background-color: pink;
+      cursor: pointer;
+    }
+  </style>
+
+</head>
+
+<body>
+  
+    
+<!-- Elmアプリケーションを開始 -->
+<div id="myapp"></div>
+
+  <script>
+
+  var app = Elm.Main_Decode.init({
+    node: document.getElementById('myapp')
+  });
+
+  // WebSocketの通信を確立する
+  var parentWindow = window.parent;
+
+  // Elmからのメッセージを受け取る
+  app.ports.sendMsg.subscribe(function(message) {
+    if (message == "Delete"){
+      console.log('クリックされました');
+      app.ports.receiveMsg.send("Delete");
+    }
+  });
+
+
+  //DOM
+  var btn = document.getElementById('btn')
+  
+  //イベントリスナ
+  // メッセージを受信したら、`receiveMsg`のポートを通してElmにメッセージを送る
+  btn.addEventListener("message", del, false);
+  function del(event){
+  	console.log('クリックされました');
+	  app.ports.receiveMsg.send("Delete");
+  }
+
+  // socket.addEventListener("message", function(event) {
+  //   app.ports.messageReceiver.send(event.data);
+  // });
+
+  
+  // function del() {
+  //   console.log('クリックされました');
+  //   // app.ports.receiveMsg.send("Delete")
+  //   app.ports.messageReceiver.send("Delete")
+  // }
+
+  // //DOM
+  // const btn = document.getElementById('btn')
+
+  // btn.addEventListener('click', del , false);
+
+  //イベントリスナ
+  // btn.addEventListener("click", function () {
+  //   app.ports.messageReceiver.send("Delete");},
+  // false);
+
+</script>
+
+
+<!-- Heroレイアウトを用いてトップにバナーを作成 -->
+<div class="hero is-info is-bold">
+  <div class="hero-body">
+      <div class="container">
+         <h1 class="title">ブロックエディタ</h1>
+      </div>
+  </div>
+</div>
+
+
+<!-- ナビゲーションバーを追加 -->
+<nav class="navbar is-transparent">
+  <div class="navbar-brand"></div>
+    <a class="navbar-item" href="https://github.com/ep18116/BlockEdit-Team">
+      <img src="ase/github.png" alt="Bulma: a modern CSS framework based on Flexbox" width="30" height="30">
+    </a>
+    <div class="navbar-burger" data-target="navbarExampleTransparentExample">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+
+  <div id="navbarExampleTransparentExample" class="navbar-menu">
+    <div class="navbar-start">
+      <a class="navbar-item" href="https://hackmd.io/s/HkamJYdHO">
+        HackMD
+      </a>
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link" href="https://bulma.io/documentation/overview/start/">
+          Docs
+        </a>
+        <div class="navbar-dropdown is-boxed">
+          <a class="navbar-item" href="https://bulma.io/documentation/overview/start/">
+            Overview
+          </a>
+          <a class="navbar-item" href="https://bulma.io/documentation/overview/modifiers/">
+            Modifiers
+          </a>
+          <a class="navbar-item" href="https://bulma.io/documentation/columns/basics/">
+            Columns
+          </a>
+          <a class="navbar-item" href="https://bulma.io/documentation/layout/container/">
+            Layout
+          </a>
+          <a class="navbar-item" href="https://bulma.io/documentation/form/general/">
+            Form
+          </a>
+          <hr class="navbar-divider">
+          <a class="navbar-item" href="https://bulma.io/documentation/elements/box/">
+            Elements
+          </a>
+          <a class="navbar-item is-active" href="https://bulma.io/documentation/components/breadcrumb/">
+            Components
+          </a>
+        </div>
+      </div>
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">
+          編集
+        </a>
+
+        <div class="navbar-dropdown is-boxed">
+          <a class="navbar-item" onclick = "del()">
+            <!-- ここで全削除を行いたい -->
+            ブロック削除
+
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- スクロールボックスの実行 -->
+  <div id="wrapper"></div>
+
+  <div id="button"></div>
+
+</body>
+</html>
