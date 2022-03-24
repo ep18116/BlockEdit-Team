@@ -1,1 +1,3 @@
-This Github is for the block editor team's graduation research.
+backupファイルは、1年間編集したプログラムのバックアップが残っています。
+main.elmは、引き継いだ時の1番最初の状態のelmを残しておいてあります。
+Finishedファイルに、卒業研究終了時のelmとhtmlを残しておきます。
